@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Old Products to Firestore</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #0a1628; color: #fff; max-width: 600px; margin: auto; }
+        h2 { color: #fbbf24; text-align: center; }
+        button { background: #fbbf24; color: #0a1628; padding: 14px; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; }
+        button:hover { background: #f59e0b; }
+        .log { background: #1e293b; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 13px; color: #cbd5e1; max-height: 400px; overflow-y: auto; white-space: pre-wrap; }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+    </style>
+</head>
+<body>
+
+    <h2>📦 Upload Old Products to Firestore</h2>
+    <p style="text-align:center; font-size:14px; color:#cbd5e1;">এই বাটনে ক্লিক করলে shop.html-এর ১৮টি প্রোডাক্ট Firestore-এ চলে যাবে।</p>
+
+    <button onclick="uploadAll()">🚀 Upload All 18 Products</button>
+
+    <div class="log" id="log">Ready...</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzWwbk-Dh1Kzzp9CvNyqC28ToCWXw41Qs",
+            authDomain: "creoverse-stock.firebaseapp.com",
+            databaseURL: "https://creoverse-stock-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "creoverse-stock",
+            storageBucket: "creoverse-stock.firebasestorage.app",
+            messagingSenderId: "128072247505",
+            appId: "1:128072247505:web:47e58c3a140f4e858bbdf0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ★★★ এখানে আপনার ১৮টি পুরনো প্রোডাক্টের ডেটা বসান ★★★
+        const oldProducts = [
+            {
+                name: "Himalaya Dark Spot Turmeric Face Wash 100ml (Buy 1 Get 1 Free)",
+                price: 223,
+                oldPrice: 230,
+                imageUrl: "https://i.ibb.co.com/HTsTMmvp/70fafce1212ef615cb579392a795d264-png-1.jpg",
+                link: "https://s.daraz.com.bd/s.YcVuy?cc",
+                description: "Enriched with Turmeric & natural herbal extracts to visibly reduce dark spots."
+            },
+            {
+                name: "HTC AT 538 Rechargeable Hair and Beard Trimmer for Men",
+                price: 599,
+                oldPrice: 1000,
+                imageUrl: "https://i.ibb.co.com/FLZWyh4g/a4007df7645694c01110fec91e0baa40-png.jpg",
+                link: "https://s.daraz.com.bd/s.Yc4gd?cc",
+                description: "Rechargeable hair & beard trimmer with sharp stainless steel blades."
+            },
+            {
+                name: "Summer Ready Three Pieces Button Design Linen Fashionable Stitched Kurti Shalwar Kameez",
+                price: 599,
+                oldPrice: 990,
+                imageUrl: "https://i.ibb.co.com/5X2fSTBv/88215747661cc083bdf464668639f46d.jpg",
+                link: "https://s.daraz.com.bd/s.Yc49L?cc",
+                description: "Premium linen 3-piece set with elegant button design."
+            },
+            {
+                name: "Ensemble Yourself - Superb Quality - New Fashionable Velvet Half Shoe For Men",
+                price: 349,
+                oldPrice: 699,
+                imageUrl: "https://i.postimg.cc/jS96nY10/d834984ae6d3f55dac98ededd3f6c088-(1).jpg",
+                link: "https://s.daraz.com.bd/s.YcUwY?cc",
+                description: "Superb quality velvet half shoe — trendy and comfortable."
+            },
+            {
+                name: "Look Stylish in a Semi-Long Printed Punjabi for Men",
+                price: 350,
+                oldPrice: 500,
+                imageUrl: "https://i.postimg.cc/R0kjR8W9/11f5af8ce0f681a7cab65da3cb9983ee.jpg",
+                link: "https://s.daraz.com.bd/s.Yc5hA?cc",
+                description: "Stylish semi-long printed Punjabi — comfortable all day."
+            },
+            {
+                name: "Life Fashion Mall Viral Hit Collection Readymade Two Piece Embroidery Work",
+                price: 599,
+                oldPrice: 850,
+                imageUrl: "https://i.postimg.cc/s16Vgr3S/1760770106874d09f5b58f0c81398415-png.jpg",
+                link: "https://s.daraz.com.bd/s.Yc5oT?cc",
+                description: "Viral hit readymade 2-piece dress with embroidery work."
+            },
+            {
+                name: "Stylish Matching Couple Dress - Saree & Panjabi Combo Set",
+                price: 599,
+                oldPrice: 2550,
+                imageUrl: "https://i.postimg.cc/R3LWPDKD/3e0c93803bb1fb1e92e2b87459507232.jpg",
+                link: "https://s.daraz.com.bd/s.Yc5u1?cc",
+                description: "Matching couple dress combo — saree & panjabi set."
+            },
+            {
+                name: "Parachute Advansed Aloe Vera Enriched Coconut Hair Oil 250ml Pack of 2",
+                price: 509,
+                oldPrice: 640,
+                imageUrl: "https://i.postimg.cc/rpSYc9VP/Scf5dea902db142ee9f82433fbfa87fefa.jpg",
+                link: "https://s.daraz.com.bd/s.Ycg16?cc",
+                description: "Enriched with Aloe Vera & Coconut oil for nourished hair."
+            },
+            {
+                name: "Park Avenue Oud Liquid Eau De Parfum Men 100ml",
+                price: 692,
+                oldPrice: 1100,
+                imageUrl: "https://i.postimg.cc/J4SLzP8R/9a4dfc364141d4e1ac0296908d9b86b0.jpg",
+                link: "https://s.daraz.com.bd/s.YcgcF?cc",
+                description: "Long-lasting premium luxury fragrance with Oud."
+            },
+            {
+                name: "2025 Latest 1000ml Stainless Steel Water Bottle",
+                price: 466,
+                oldPrice: 1599,
+                imageUrl: "https://i.postimg.cc/cH3DTMjx/25ee95c1ba52c5fc5554a6445a19db29-png.jpg",
+                link: "https://s.daraz.com.bd/s.YcgSb?cc",
+                description: "1000ml stainless steel water bottle — durable & stylish."
+            },
+            {
+                name: "Hoco EQ34 Plus Rima True Wireless Earbuds - ANC + ENC Bluetooth 5.4",
+                price: 819,
+                oldPrice: 1500,
+                imageUrl: "https://i.postimg.cc/XYZ9wNtB/2828d8bba0587a552823566e2dbec9ed-png-(1).jpg",
+                link: "https://s.daraz.com.bd/s.YcgP2?cc",
+                description: "TWS earbuds with ANC + ENC and Bluetooth 5.4."
+            },
+            {
+                name: "Pond's Super Light Gel Moisturiser 100ml",
+                price: 275,
+                oldPrice: 350,
+                imageUrl: "https://i.postimg.cc/c4PvGR56/c57c86811b62ffe35b96315208f8d9c1-png.jpg",
+                link: "https://s.daraz.com.bd/s.YcgmD?cc",
+                description: "Super light gel moisturiser for hydrated skin."
+            },
+            {
+                name: "Veet 100gm Normal + FREE Dettol Soap 70g - Aloe Vera & Rose Extract",
+                price: 310,
+                oldPrice: 370,
+                imageUrl: "https://i.postimg.cc/DyG2stBn/a0a5b0ce3b4ab640cca0e20b0a551f98.jpg",
+                link: "https://s.daraz.com.bd/s.YcgMF?cc",
+                description: "Hair removal cream with Aloe Vera & Rose Extract."
+            },
+            {
+                name: "FLH DO1 EPP Foam RC Fighter Jet 2.4G 4 Channels Drone",
+                price: 1499,
+                oldPrice: 2900,
+                imageUrl: "https://i.postimg.cc/hPRGCDJx/Sc56d137f3ced4f4a94339d36a644471b-C.jpg",
+                link: "https://s.daraz.com.bd/s.Ycgpg?cc",
+                description: "RC Fighter Jet drone with Altitude Hold, 2 batteries."
+            },
+            {
+                name: "Moodstrings Imported Indian Guddi Bra For Women",
+                price: 209,
+                oldPrice: 800,
+                imageUrl: "https://i.postimg.cc/SNmh2J29/373045bda6b3cb35d209bd34a74f3f43.jpg",
+                link: "https://s.daraz.com.bd/s.Ycgqh?cc",
+                description: "All season cotton casual bra with full coverage."
+            },
+            {
+                name: "Dove Shampoo Intense Repair 650ml",
+                price: 585,
+                oldPrice: 740,
+                imageUrl: "https://i.postimg.cc/GpXzc38N/6359fd8f23524d3ba27cdb88256e589e-png.jpg",
+                link: "https://s.daraz.com.bd/s.YcgFI?cc",
+                description: "Intense repair shampoo for damaged hair."
+            },
+            {
+                name: "EMS Mini Massager with 2 Pad - Muscle Stimulator",
+                price: 199,
+                oldPrice: 199,
+                imageUrl: "https://i.postimg.cc/8PdRpkxP/955596920f0a50954514085436d772b6.jpg",
+                link: "https://s.daraz.com.bd/s.YcgEi?cc",
+                description: "EMS mini massager for full body pain relief."
+            },
+            {
+                name: "Electric Hot Water Bag Pain Remover - Multicolour",
+                price: 156,
+                oldPrice: 220,
+                imageUrl: "https://i.postimg.cc/prRdqvC4/0259502350a17edb2da256ca7d88b94d.jpg",
+                link: "https://s.daraz.com.bd/s.YcgC5?cc",
+                description: "Electric hot water bag for quick pain relief."
+            }
+        ];
+
+        const logEl = document.getElementById('log');
+
+        window.uploadAll = async function() {
+            logEl.innerHTML = '⏳ Uploading...\n\n';
+            let success = 0;
+            let failed = 0;
+
+            for (let i = 0; i < oldProducts.length; i++) {
+                const p = oldProducts[i];
+                try {
+                    await addDoc(collection(db, "products"), {
+                        name: p.name,
+                        price: p.price,
+                        oldPrice: p.oldPrice,
+                        imageUrl: p.imageUrl,
+                        link: p.link,
+                        description: p.description,
+                        createdAt: new Date()
+                    });
+                    success++;
+                    logEl.innerHTML += `<span class="success">✅ ${i + 1}. ${p.name.substring(0, 50)}...</span>\n`;
+                } catch (err) {
+                    failed++;
+                    logEl.innerHTML += `<span class="error">❌ ${i + 1}. Failed: ${err.message}</span>\n`;
+                }
+            }
+
+            logEl.innerHTML += `\n\n🎉 DONE!\n✅ Success: ${success}\n❌ Failed: ${failed}`;
+            alert(`Upload Complete!\n\n✅ Success: ${success}\n❌ Failed: ${failed}`);
+        };
+    </script>
+
+</body>
+</html>

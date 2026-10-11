@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - STOCK FABLE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        html { width: 100%; overflow-x: hidden; }
+        body {
+            width: 100%;
+            overflow-x: hidden;
+            background: #ffffff;
+            color: #1a1f2e;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; }
+
+        /* ★★★ NAVBAR ★★★ */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 6%;
+            background: #0a1628;
+            border-bottom: 1px solid rgba(251, 191, 36, 0.3);
+            position: sticky; top: 0; z-index: 100;
+            flex-wrap: wrap; gap: 10px;
+        }
+        .nav-logo {
+            display: flex; align-items: center; gap: 10px;
+            font-weight: 800; font-size: 18px; color: #fff;
+            text-decoration: none;
+        }
+        .nav-logo .logo-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 8px; display: flex; justify-content: center; align-items: center;
+            color: #0a1628; font-size: 16px;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+        }
+        .nav-links { display: flex; gap: 24px; flex-wrap: wrap; }
+        .nav-links a {
+            text-decoration: none; color: #cbd5e1; font-size: 14px;
+            font-weight: 500; transition: 0.2s; padding: 6px 0;
+        }
+        .nav-links a:hover, .nav-links a.active { color: #fbbf24; }
+
+        /* ★★★ HERO ★★★ */
+        .hero-section {
+            padding: 40px 6% 15px; max-width: 1200px; margin: 0 auto; text-align: center;
+        }
+        .hero-title {
+            font-size: 32px; font-weight: 800; color: #0a1628;
+            line-height: 1.15; margin-bottom: 12px;
+        }
+        .hero-title .highlight {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-subtitle {
+            font-size: 14px; color: #64748b; max-width: 700px; margin: 0 auto;
+        }
+
+        /* ★★★ CATEGORY TABS ★★★ */
+        .category-tabs {
+            display: flex; gap: 10px; padding: 20px 6% 15px;
+            max-width: 1200px; margin: 0 auto;
+            overflow-x: auto; scrollbar-width: none;
+            flex-wrap: wrap; justify-content: center;
+        }
+        .category-tabs::-webkit-scrollbar { display: none; }
+        .cat-tab {
+            flex: 0 0 auto; padding: 10px 20px; border-radius: 22px;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #475569; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: 0.3s; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .cat-tab:hover { border-color: #fbbf24; color: #f59e0b; }
+        .cat-tab.active {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #0a1628; border-color: transparent;
+        }
+
+        /* ★★★ PRODUCTS SECTION ★★★ */
+        .products-section {
+            max-width: 1200px; margin: 0 auto 30px; padding: 0 6%;
+        }
+        .products-section-header h2 {
+            font-size: 20px; font-weight: 700; color: #0a1628;
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 20px;
+        }
+        .products-section-header h2 i { color: #f59e0b; }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 18px;
+            align-items: start;
+        }
+
+        .product-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.35s ease;
+            box-shadow: 0 4px 15px -5px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            cursor: pointer;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            border-color: #fbbf24;
+            box-shadow: 0 20px 40px -10px rgba(251, 191, 36, 0.3);
+        }
+
+        .card-link {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            text-decoration: none;
+        }
+
+        .buy-now-btn {
+            position: relative;
+            z-index: 10;
+        }
+
+        .product-image {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            background: #f1f5f9;
+        }
+        .product-image img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            display: block;
+        }
+        .product-card:hover .product-image img { transform: scale(1.08); }
+
+        .discount-badge {
+            position: absolute; top: 10px; left: 10px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff; padding: 4px 10px;
+            border-radius: 8px; font-size: 11px; font-weight: 800;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.5);
+            z-index: 6;
+        }
+
+        .commission-badge {
+            position: absolute; top: 10px; right: 10px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff; padding: 4px 9px;
+            border-radius: 8px; font-size: 10px; font-weight: 700;
+            z-index: 6;
+        }
+
+        .product-info {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .brand-tag {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #1e40af; color: #fff;
+            padding: 3px 9px; border-radius: 6px;
+            font-size: 10px; font-weight: 700;
+            margin-bottom: 8px; align-self: flex-start;
+        }
+
+        .product-title {
+            font-size: 14px; font-weight: 700;
+            color: #1a1f2e; line-height: 1.35;
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; min-height: 38px;
+        }
+
+        .product-rating {
+            font-size: 11px; color: #f59e0b;
+            font-weight: 600; margin-bottom: 10px;
+        }
+        .product-rating span { color: #64748b; font-weight: 400; }
+
+        .product-prices {
+            display: flex; align-items: baseline; gap: 10px;
+            margin-bottom: 10px; flex-wrap: wrap;
+        }
+        .current-price {
+            font-size: 22px; font-weight: 800; color: #f59e0b;
+        }
+        .old-price {
+            font-size: 13px; color: #94a3b8;
+            text-decoration: line-through;
+        }
+
+        .desc-preview {
+            background: #f8fafc;
+            border-left: 3px solid #fbbf24;
+            border-radius: 8px;
+            padding: 9px 11px;
+            margin-bottom: 10px;
+        }
+        .desc-preview-text {
+            font-size: 11.5px;
+            color: #64748b;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .buy-now-btn {
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; width: 100%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff; padding: 11px;
+            border-radius: 10px; text-decoration: none;
+            font-size: 13.5px; font-weight: 700;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            margin-top: auto;
+        }
+        .buy-now-btn:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+            font-size: 15px;
+            background: #f8fafc;
+            border-radius: 14px;
+            border: 1px dashed #e2e8f0;
+        }
+        .empty-state i {
+            font-size: 40px;
+            color: #cbd5e1;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* ★★★ FOOTER ★★★ */
+        .main-footer {
+            text-align: center; padding: 18px;
+            background: #0a1628; color: #94a3b8; font-size: 12px;
+            border-top: 1px solid rgba(251, 191, 36, 0.3);
+            margin-top: auto;
+        }
+        .main-footer strong { color: #fbbf24; }
+
+        @media (max-width: 600px) {
+            .hero-title { font-size: 22px; }
+            .navbar { padding: 12px 5%; flex-direction: column; }
+            .nav-links { justify-content: center; gap: 18px; }
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+            .hero-section { padding: 30px 5% 10px; }
+            .product-info { padding: 10px; }
+            .product-title { font-size: 12.5px; min-height: 34px; }
+            .current-price { font-size: 17px; }
+            .old-price { font-size: 11px; }
+            .buy-now-btn { font-size: 12px; padding: 9px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+
+        <!-- ★ NAVBAR ★ -->
+        <nav class="navbar">
+            <a href="index.html" class="nav-logo">
+                <div class="logo-icon"><i class="fas fa-shopping-bag"></i></div>
+                STOCK FABLE
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="shop.html" class="active">Shop</a>
+                <a href="add-product.html">Add Product</a>
+            </div>
+        </nav>
+
+        <!-- ★ HERO ★ -->
+        <section class="hero-section">
+            <h1 class="hero-title">All <span class="highlight">Affiliate Products</span></h1>
+            <p class="hero-subtitle">
+                Browse all products posted by our community. Every item is verified and available through trusted affiliate links.
+            </p>
+        </section>
+
+        <!-- ★ PRODUCTS SECTION ★ -->
+        <section class="products-section">
+            <div class="products-section-header">
+                <h2><i class="fas fa-star"></i> All Products</h2>
+            </div>
+            
+            <div class="product-grid" id="productGrid">
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Loading products...
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ★ FOOTER ★ -->
+    <footer class="main-footer">
+        © 2026 <strong>STOCK FABLE</strong> — Affiliate Marketplace. All rights reserved.
+    </footer>
+
+    <!-- ★★ Firebase Dynamic Product Loader Script ★★ -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzWwbk-Dh1Kzzp9CvNyqC28ToCWXw41Qs",
+            authDomain: "creoverse-stock.firebaseapp.com",
+            databaseURL: "https://creoverse-stock-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "creoverse-stock",
+            storageBucket: "creoverse-stock.firebasestorage.app",
+            messagingSenderId: "128072247505",
+            appId: "1:128072247505:web:47e58c3a140f4e858bbdf0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadDynamicProducts() {
+            const grid = document.getElementById('productGrid');
+            if (!grid) return;
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "products"));
+
+                if (querySnapshot.empty) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-box-open"></i>
+                            <p>No products posted yet.</p>
+                            <p style="margin-top:10px;">
+                                <a href="add-product.html" style="color:#f59e0b; text-decoration:underline;">Be the first to post →</a>
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const p = doc.data();
+                    
+                    let discountBadge = '';
+                    if (p.oldPrice && p.price && p.oldPrice > p.price) {
+                        const percent = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+                        discountBadge = `<span class="discount-badge">-${percent}%</span>`;
+                    }
+
+                    const cardHTML = `
+                        <div class="product-card">
+                            <a href="${p.link || '#'}" target="_blank" rel="noopener sponsored" class="card-link"></a>
+                            <div class="product-image">
+                                ${discountBadge}
+                                <span class="commission-badge">Hot Deal</span>
+                                <img src="${p.imageUrl}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300/f1f5f9/94a3b8?text=No+Image'">
+                            </div>
+                            <div class="product-info">
+                                <div class="brand-tag"><i class="fas fa-tag"></i> Affiliate</div>
+                                <h3 class="product-title">${p.name}</h3>
+                                <div class="product-rating">⭐ 4.6 <span>(New Arrival)</span></div>
+                                <div class="product-prices">
+                                    <span class="current-price">৳${p.price}</span>
+                                    ${p.oldPrice ? `<span class="old-price">৳${p.oldPrice}</span>` : ''}
+                                </div>
+                                <div class="desc-preview">
+                                    <div class="desc-preview-text">${p.description || 'No description available.'}</div>
+                                </div>
+                                <a href="${p.link || '#'}" target="_blank" rel="noopener sponsored" class="buy-now-btn">
+                                    <i class="fas fa-shopping-cart"></i> Buy Now
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    
+                    grid.innerHTML += cardHTML;
+                });
+
+                console.log("✅ Products loaded from Firestore!");
+
+            } catch (error) {
+                console.error("❌ Error loading products: ", error);
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Failed to load products.</p>
+                        <p style="margin-top:10px; font-size:12px; color:#94a3b8;">${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        window.addEventListener('load', loadDynamicProducts);
+    </script>
+
+</body>
+</html>
